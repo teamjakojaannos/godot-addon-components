@@ -85,3 +85,14 @@ func _try_take_damage(amount: float, _from: Node, point: Vector2) -> void:
 		_was_just_hurt = true
 		await get_tree().create_timer(invulnerable_time_after_damage, false).timeout
 		_was_just_hurt = false
+
+
+trait Component extends Node:
+	signal hurt
+	signal hurt_at(position: Vector2)
+
+	func _ready() -> void:
+		Signals.alias(health().hurt, self.hurt)
+		Signals.alias(health().hurt_at, self.hurt_at)
+
+	func health() -> Health
