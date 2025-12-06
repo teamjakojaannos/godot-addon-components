@@ -87,7 +87,7 @@ func _try_take_damage(amount: float, _from: Node, point: Vector2) -> void:
 		_was_just_hurt = false
 
 
-trait Accessor:
+trait Accessor extends Node:
 	signal die
 
 	signal healed
@@ -97,24 +97,26 @@ trait Accessor:
 	signal hurt_invulnerable
 	signal hurt_too_soon
 
-	func health() -> Health
+	@onready var _health_component: Health = init_health_component()
+
+	func init_health_component() -> Health:
+		return Nodes.find_by_class(self, Health)
 
 	func __health_accessor_ready() -> void:
-		var h = health()
-		Signals.alias(h.die, die)
+		Signals.alias(_health_component.die, die)
 
-		Signals.alias(h.healed, healed)
+		Signals.alias(_health_component.healed, healed)
 
-		Signals.alias(h.hurt, hurt)
-		Signals.alias(h.hurt_at, hurt_at)
-		Signals.alias(h.hurt_invulnerable, hurt_invulnerable)
-		Signals.alias(h.hurt_too_soon, hurt_too_soon)
+		Signals.alias(_health_component.hurt, hurt)
+		Signals.alias(_health_component.hurt_at, hurt_at)
+		Signals.alias(_health_component.hurt_invulnerable, hurt_invulnerable)
+		Signals.alias(_health_component.hurt_too_soon, hurt_too_soon)
 
 	func heal(amount: float, healer: Node) -> void:
-		health().heal(amount, healer)
+		_health_component.heal(amount, healer)
 
 	func take_damage(amount: float, dealt_by: Node) -> void:
-		health().take_damage(amount, dealt_by)
+		_health_component.take_damage(amount, dealt_by)
 
 	func take_damage_at(amount: float, dealt_by: Node, at: Vector2) -> void:
-		health().take_damage_at(amount, dealt_by, at)
+		_health_component.take_damage_at(amount, dealt_by, at)
