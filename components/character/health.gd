@@ -87,12 +87,34 @@ func _try_take_damage(amount: float, _from: Node, point: Vector2) -> void:
 		_was_just_hurt = false
 
 
-trait Component extends Node:
+trait Accessor:
+	signal die
+
+	signal healed
+
 	signal hurt
 	signal hurt_at(position: Vector2)
-
-	func _ready() -> void:
-		Signals.alias(health().hurt, self.hurt)
-		Signals.alias(health().hurt_at, self.hurt_at)
+	signal hurt_invulnerable
+	signal hurt_too_soon
 
 	func health() -> Health
+
+	func __health_accessor_ready() -> void:
+		var h = health()
+		Signals.alias(h.die, die)
+
+		Signals.alias(h.healed, healed)
+
+		Signals.alias(h.hurt, hurt)
+		Signals.alias(h.hurt_at, hurt_at)
+		Signals.alias(h.hurt_invulnerable, hurt_invulnerable)
+		Signals.alias(h.hurt_too_soon, hurt_too_soon)
+
+	func heal(amount: float, healer: Node) -> void:
+		health().heal(amount, healer)
+
+	func take_damage(amount: float, dealt_by: Node) -> void:
+		health().take_damage(amount, dealt_by)
+
+	func take_damage_at(amount: float, dealt_by: Node, at: Vector2) -> void:
+		health().take_damage_at(amount, dealt_by, at)
