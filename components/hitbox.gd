@@ -16,5 +16,4 @@ var enabled: bool:
 
 
 func _ready() -> void:
-	if health == null:
-		health = get_parent().get_node_or_null("Health")
+	health = Nodes.find_if_null(self, health, Health)
